@@ -92,6 +92,7 @@ const Manager = () => {
     const editPassword = (id) => {
         setForm({ ...passwordArray.filter(i => i.id === id)[0], id: id })
         setPasswordArray(passwordArray.filter(item => item.id !== id))
+        deletePassword(id);
     }
 
     const handleChange = (e) => {
@@ -179,3 +180,4 @@ const Manager = () => {
 }
 
 export default Manager
+
