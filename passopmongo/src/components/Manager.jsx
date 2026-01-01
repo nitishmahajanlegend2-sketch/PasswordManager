@@ -4,41 +4,55 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import {v4 as uuidv4} from 'uuid';
 
-const Manager = () => {
+const Manager = () =>{
     var[form,setForm]=useState({site:"",username:"",password:""})
         var [passwordArray,setPasswordArray]=useState([]);
-    useEffect(()=>{
-        console.log(form)
-        let passwords=localStorage.getItem("passwords")
-        
-        if(passwords){
-            setPasswordArray(JSON.parse(passwords))
+        const getpasswords=async()=>{
+          let req=await fetch("http://localhost:3000")
+         
+          let passwords=await req.json();
+          
+           
+            setPasswordArray((passwords))}
 
+
+        
+    useEffect(()=>{
+        
+        getpasswords();
+        
+       
         }
        
-        },[])
+        ,[])
 
-    const savePassword=()=>{
+    const savePassword=async()=>{
         console.log(form)
         if(form.site.length>3 && form.username.length>3 && form.site.length>3){
-        
-        setPasswordArray([...passwordArray,{...form,id:uuidv4()}])
-        console.log(passwordArray)
-        localStorage.setItem("passwords",JSON.stringify([...passwordArray,{...form,id:uuidv4()}]))
+          // 
+        await fetch("http://localhost:3000/",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:form.id})})
+       setPasswordArray([...passwordArray,{...form,id:uuidv4()}])
+       await fetch("http://localhost:3000/",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,id:uuidv4()})})
+        //console.log(passwordArray)
+        //localStorage.setItem("passwords",JSON.stringify([...passwordArray,{...form,id:uuidv4()}]))
         setForm({site:"",username:"",password:""})}
         else{
           {alert("Please enter valid password")}
         }
 
     }
-     const deletePassword=(id)=>{
+     const deletePassword=async(id)=>{
 
         setPasswordArray(passwordArray.filter(item=>item.id!==id))
-        localStorage.setItem("passwords",JSON.stringify(passwordArray.filter(item=>item.id!==id)))
+        //localStorage.setItem("passwords",JSON.stringify(passwordArray.filter(item=>item.id!==id)))
+        let res=await fetch("http://localhost:3000/",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,id})})
+       
+         
     }
     const editPassword=(id)=>{
-      setForm(passwordArray.filter(i=>i.id==id[0]))
+      setForm({...passwordArray.filter(i=>i.id==id)[0],id:id})
       setPasswordArray(passwordArray.filter(item=>item.id!==id))
+
 
     }
     const handleChange=(e)=>{
@@ -107,14 +121,14 @@ transition="Bounce"
       <th>Actions</th>
     </tr>
   </thead>
-  <tbody className='bg-green-100 border-1'>
-    {passwordArray.map((item)=>{
-    return(
-    <tr className='border-1 '>
-      <td className='text-center w-32 '><div className='flex gap:6 py-3' ><img className=' ' src="/icons/content_copy.png" alt="" onClick={()=>{copyText(item.site)}} /><a  href={item.site} target='_blank'>{item.site} </a></div></ td>
-      <td className='text-center w-32'><div className='flex gap:1'><img  src="/icons/content_copy.png" alt="" onClick={()=>{copyText(item.username)}} />{item.username}</div> </td >
-      <td className='text-center w-32'><div className='flex gap:1'><img  src="/icons/content_copy.png" alt="" onClick={()=>{copyText(item.password)}} />{item.password}</div></td >
-      <td className='text-center w-32'><div className='flex gap:1'><img className=' w-5' src="/icons/deleteicon.png" alt="" onClick={()=>{deletePassword(item.id)}}/>&nbsp;<img className='w-5' src="/icons/editicon.png" alt="" onClick={()=>{editPassword(item.id)}}/></div></td >
+  <tbody className='bg-green-100 border'>
+    {passwordArray.map((item,index)=>{
+  
+   return( <tr className='border-1 ' key={index}>
+      <td className='text-center w-32 break-all'><div className='flex gap:6 py-3' ><img className=' ' src="/icons/content_copy.png" alt="" onClick={()=>{copyText(item.site)}} /><a  href={item.site} target='_blank'>{item.site} </a></div></ td>
+      <td className='text-center w-32 break-all'><div className='flex gap:1'><img  src="/icons/content_copy.png" alt="" onClick={()=>{copyText(item.username)}} />{item.username}</div> </td >
+      <td className='text-center w-32 brak-all'><div className='flex gap:1'><img  src="/icons/content_copy.png" alt="" onClick={()=>{copyText(item.password)}} />{"*".repeat(item.password.length)}</div></td >
+      <td className='text-center w-32 break-all '><div className='flex gap:1'><img className=' w-5' src="/icons/deleteicon.png" alt="" onClick={()=>{deletePassword(item.id)}}/>&nbsp;<img className='w-5' src="/icons/editicon.png" alt="" onClick={()=>{editPassword(item.id)}}/></div></td >
     </tr>)})}
    
   </tbody>
