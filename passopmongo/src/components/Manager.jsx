@@ -18,8 +18,8 @@ const Manager = () => {
     };
 
     const getpasswords = async () => {
-        let req = await fetch("https://passwordmanager-uzs5.onrender.com", {
-            headers: { "user-id": getUserId() } // Send ID in header
+        let req = await fetch("https://passwordmanager-uzs5.onrender.com", {method:"GET",
+            headers: {"Content-Type":"application/json", "user-id": getUserId() } // Send ID in header
         })
         let passwords = await req.json();
         setPasswordArray(passwords)
@@ -132,4 +132,5 @@ const Manager = () => {
 }
 
 export default Manager
+
 
