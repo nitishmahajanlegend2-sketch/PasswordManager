@@ -8,7 +8,7 @@ const Manager = () =>{
     var[form,setForm]=useState({site:"",username:"",password:""})
         var [passwordArray,setPasswordArray]=useState([]);
         const getpasswords=async()=>{
-          let req=await fetch("http://localhost:3000")
+          let req=await fetch("https://passwordmanager-uzs5.onrender.com")
          
           let passwords=await req.json();
           
@@ -30,9 +30,9 @@ const Manager = () =>{
         console.log(form)
         if(form.site.length>3 && form.username.length>3 && form.site.length>3){
           // 
-        await fetch("http://localhost:3000/",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:form.id})})
+        await fetch("https://passwordmanager-uzs5.onrender.com",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:form.id})})
        setPasswordArray([...passwordArray,{...form,id:uuidv4()}])
-       await fetch("http://localhost:3000/",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,id:uuidv4()})})
+       await fetch("https://passwordmanager-uzs5.onrender.com",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,id:uuidv4()})})
         //console.log(passwordArray)
         //localStorage.setItem("passwords",JSON.stringify([...passwordArray,{...form,id:uuidv4()}]))
         setForm({site:"",username:"",password:""})}
@@ -45,7 +45,7 @@ const Manager = () =>{
 
         setPasswordArray(passwordArray.filter(item=>item.id!==id))
         //localStorage.setItem("passwords",JSON.stringify(passwordArray.filter(item=>item.id!==id)))
-        let res=await fetch("http://localhost:3000/",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,id})})
+        let res=await fetch("https://passwordmanager-uzs5.onrender.com",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({...form,id})})
        
          
     }
@@ -139,3 +139,4 @@ transition="Bounce"
 }
 
 export default Manager
+
