@@ -111,7 +111,7 @@ const Manager = () => {
                                 </tr>
                             </thead>
                             <tbody className='bg-green-100'>
-                                {passwordArray.map((item, index) => (
+                                {Array.isArray(passwordArray) && passwordArray.map((item, index) => (
                                     <tr key={index} className='border-b border-white'>
                                         <td className='p-2 text-center'><a href={item.site} target='_blank' rel="noreferrer">{item.site}</a></td>
                                         <td className='p-2 text-center'>{item.username}</td>
@@ -132,3 +132,4 @@ const Manager = () => {
 }
 
 export default Manager
+
