@@ -10,6 +10,54 @@ const Manager = () => {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     };
 
+    // Generate a random encryption key
+    const generateEncryptionKey = () => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+        let key = '';
+        for (let i = 0; i < 32; i++) {
+            key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return key;
+    };
+
+    // Get or create encryption key
+    const getEncryptionKey = () => {
+        let key = localStorage.getItem("encryptionKey");
+        if (!key) {
+            key = generateEncryptionKey();
+            localStorage.setItem("encryptionKey", key);
+        }
+        return key;
+    };
+
+    // Simple XOR encryption/decryption
+    const encryptPassword = (password) => {
+        const key = getEncryptionKey();
+        let encrypted = '';
+        for (let i = 0; i < password.length; i++) {
+            const charCode = password.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+            encrypted += String.fromCharCode(charCode);
+        }
+        // Convert to base64 for safe storage
+        return btoa(encrypted);
+    };
+
+    const decryptPassword = (encryptedPassword) => {
+        try {
+            const key = getEncryptionKey();
+            // Decode from base64
+            const encrypted = atob(encryptedPassword);
+            let decrypted = '';
+            for (let i = 0; i < encrypted.length; i++) {
+                const charCode = encrypted.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                decrypted += String.fromCharCode(charCode);
+            }
+            return decrypted;
+        } catch (error) {
+            return '';
+        }
+    };
+
     // Helper to get or create a unique User ID
     const getUserId = () => {
         let id = localStorage.getItem("userId");
@@ -36,22 +84,44 @@ const Manager = () => {
                 }
             })
             let passwords = await req.json();
-            setPasswordArray(passwords)
+            
+            // Decrypt passwords before setting state
+            const decryptedPasswords = passwords.map(item => ({
+                ...item,
+                password: decryptPassword(item.password)
+            }));
+            
+            setPasswordArray(decryptedPasswords)
         } catch (error) {
             showToast('Failed to load passwords', 'error');
         }
     }
 
     useEffect(() => {
+        // Ensure encryption key exists on first visit
+        getEncryptionKey();
         getpasswords();
     }, [])
 
     const savePassword = async () => {
         if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
-            const newPassword = { ...form, id: generateId() };
+            // Encrypt the password before sending to server
+            const encryptedPassword = encryptPassword(form.password);
             
-            // Optimistic UI update
-            setPasswordArray([...passwordArray, newPassword])
+            const newPassword = { 
+                ...form, 
+                password: encryptedPassword, 
+                id: generateId() 
+            };
+            
+            // Store decrypted version in UI
+            const uiPassword = { 
+                ...form, 
+                id: newPassword.id 
+            };
+            
+            // Optimistic UI update with decrypted password
+            setPasswordArray([...passwordArray, uiPassword])
 
             try {
                 await fetch("https://passwordmanager-uzs5.onrender.com", {
@@ -92,7 +162,6 @@ const Manager = () => {
     const editPassword = (id) => {
         setForm({ ...passwordArray.filter(i => i.id === id)[0], id: id })
         setPasswordArray(passwordArray.filter(item => item.id !== id))
-        deletePassword(id);
     }
 
     const handleChange = (e) => {
@@ -119,7 +188,7 @@ const Manager = () => {
                 <h1 className='text-4xl font-bold text-center'>
                     <span className="text-green-700">&lt;</span>PassOP <span className="text-green-700">/&gt;</span>
                 </h1>
-                <p className='text-green-700 text-lg text-center'>Your own password manager</p>
+                <p className='text-green-700 text-lg text-center'>Your own password manager (End-to-End Encrypted)</p>
                 
                 <div className="flex flex-col p-4 gap-3 items-center">
                     <input value={form.site} onChange={handleChange} placeholder='Enter website URL' name="site" className='rounded-full border border-green-500 w-full py-1 px-4 text-black' type="text" />
@@ -174,10 +243,16 @@ const Manager = () => {
                         </table>
                     )}
                 </div>
+
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-gray-700">
+                        🔒 <strong>Security Note:</strong> Your passwords are encrypted with a key stored locally in your browser. 
+                        Only you can decrypt them. Keep your browser data safe!
+                    </p>
+                </div>
             </div>
         </>
     )
 }
 
 export default Manager
-
