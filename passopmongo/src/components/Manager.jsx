@@ -140,3 +140,4 @@ transition="Bounce"
 
 export default Manager
 
+
