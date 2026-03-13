@@ -1,17 +1,22 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-"# PasswordManager" 
+🛡️ PassOP: A Simple MERN Stack Password Manager
+SecurePass is a streamlined, full-stack web application designed to help users securely store and manage their digital credentials. Built with the MERN (MongoDB, Express, React, Node.js) stack, it focuses on a clean UI and efficient data handling.
+🚀 Features
+Full CRUD Functionality: Create, Read, Update, and Delete your saved passwords.
+Secure Storage: Backend integration with MongoDB for persistent data.
+Password Visibility Toggle: Easily hide or reveal passwords with a single click.
+Responsive Design: Optimized for both desktop and mobile viewing.
+Copy to Clipboard: One-tap copying for usernames and passwords to save time.
+Layer Technology
+Frontend React.js, Tailwind CSS
+Backend Node.js, Express.js
+Database MongoDB (Atlas)
+Icons Lordicon / Lucide React
+📸 Architecture Overview
+The application follows a standard client-server architecture. The React frontend communicates with the Node/Express API via RESTful endpoints, which in turn performs operations on the MongoDB database.
+🤝 Contributing
+Contributions make the open-source community an amazing place to learn and create.
+Fork the Project
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+Push to the Branch (git push origin feature/AmazingFeature)
+Open a Pull Request
